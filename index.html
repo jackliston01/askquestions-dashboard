@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room Dashboard</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4daa57;
+            --light-bg: #f5f7fa;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --light-text: #777777;
+            --border-color: #e0e0e0;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-header {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .dashboard-header h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .dashboard-header p {
+            color: var(--light-text);
+            font-size: 16px;
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            color: var(--light-text);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .chart-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .chart-card h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .message-list {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .message-list h3 {
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .message-card {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .message-author {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .message-time {
+            color: var(--light-text);
+            font-size: 14px;
+        }
+        
+        .message-question {
+            padding: 10px;
+            background-color: var(--light-bg);
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .reply-section {
+            padding-left: 15px;
+            border-left: 3px solid var(--accent-color);
+            margin-top: 10px;
+        }
+        
+        .reply-item {
+            padding: 8px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .reply-type {
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-right: 5px;
+            display: inline-block;
+        }
+        
+        .type-feedback {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .type-further {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        
+        .type-strengthen {
+            background-color: #fff8e1;
+            color: #f57f17;
+        }
+        
+        .type-airesponse {
+            background-color: #f3e5f5;
+            color: #7b1fa2;
+        }
+        
+        .reply-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        
+        .reply-author {
+            font-weight: 500;
+        }
+        
+        .reply-time {
+            font-size: 12px;
+            color: var(--light-text);
+        }
+        
+        .no-messages {
+            text-align: center;
+            padding: 30px;
+            color: var(--light-text);
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-header">
+            <h1>Chat Room Dashboard</h1>
+            <p>Insights and analytics for your chat room data</p>
+        </div>
+        
+        <div class="dashboard-stats">
+            <div class="stat-card">
+                <h3>Total Messages</h3>
+                <div class="stat-value" id="total-messages">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Replies</h3>
+                <div class="stat-value" id="total-replies">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Members</h3>
+                <div class="stat-value" id="member-count">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>AI Responses</h3>
+                <div class="stat-value" id="ai-responses">-</div>
+            </div>
+        </div>
+        
+        <div class="charts-container">
+            <div class="chart-card">
+                <h3>Reply Types Distribution</h3>
+                <canvas id="reply-types-chart"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Message Timeline</h3>
+                <canvas id="message-timeline-chart"></canvas>
+            </div>
+        </div>
+        
+        <div class="message-list">
+            <h3>Recent Messages</h3>
+            <div id="messages-container">
+                <div class="no-messages">Loading messages...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        // Sample data
+        const chatData = {
+            "messages": [
+                {
+                    "name": "Bally Maj",
+                    "question": "Why is the sky blue?",
+                    "time": 1747698267439,
+                    "id": "ballymaj1747698267439",
+                    "replies": [
+                        {
+                            "name": "Bally Maj",
+                            "replycontent": "test",
+                            "replytype": "feedback",
+                            "time": 1747698894862,
+                            "childof": "ballymaj1747698267439"
+                        },
+                        {
+                            "name": "Bally Maj",
+                            "replycontent": "test",
+                            "replytype": "further",
+                            "time": 1747698961951,
+                            "childof": "ballymaj1747698267439"
+                        },
+                        {
+                            "name": "Bally Maj asked AI to strengthen the question and gave the following context: no context. AI responded",
+                            "replycontent": "*   Instead of a simple answer, ask what factors *aren't* responsible for the sky's color.\n*   Prompt the respondent to consider how the sky's color might appear on other planets or under different atmospheric conditions.\n*   Encourage reflection on how our understanding of the sky's color has evolved historically and what future discoveries might reshape it.\n",
+                            "replytype": "strengthen",
+                            "time": 1747698965237,
+                            "childof": "ballymaj1747698267439"
+                        },
+                        {
+                            "name": "Bally Maj asked AI to answer the question and gave the following context: no context. AI responded",
+                            "replycontent": "The sky is blue because of Rayleigh scattering. This scattering effect occurs when sunlight hits air molecules, and blue light is scattered more than other colors due to its shorter wavelength. Further questions: How does air pollution affect the color of the sky? Why are sunsets often red?\n",
+                            "replytype": "airesponse",
+                            "time": 1747698968332,
+                            "childof": "ballymaj1747698267439"
+                        }
+                    ]
+                },
+                {
+                    "name": "Bally Maj",
+                    "question": "hello?",
+                    "time": 1747698890000,
+                    "id": "ballymaj1747698890000",
+                    "replies": [
+                        {
+                            "name": "Bally Maj",
+                            "replycontent": "test",
+                            "replytype": "further",
+                            "time": 1747698972759,
+                            "childof": "ballymaj1747698890000"
+                        }
+                    ]
+                },
+                {
+                    "name": "Bally Maj",
+                    "question": "Why is the ocean not red?",
+                    "time": 1747698957775,
+                    "id": "ballymaj1747698957775",
+                    "replies": []
+                }
+            ],
+            "admin": "Bally Maj",
+            "members": ["Bally Maj"],
+            "membercount": 1,
+            "totalmessages": 3
+        };
+
+        // Parse and process data
+        function processData(data) {
+            // Count total replies
+            let totalReplies = 0;
+            let replyTypes = {};
+            let aiResponses = 0;
+            let messageTimeline = {};
+            
+            // Process messages and replies
+            data.messages.forEach(message => {
+                // Format date for timeline
+                const messageDate = new Date(message.time);
+                const dateKey = formatDate(messageDate);
+                
+                if (!messageTimeline[dateKey]) {
+                    messageTimeline[dateKey] = {
+                        messages: 0,
+                        replies: 0
+                    };
+                }
+                messageTimeline[dateKey].messages++;
+                
+                // Process replies
+                message.replies.forEach(reply => {
+                    totalReplies++;
+                    
+                    // Count reply types
+                    if (!replyTypes[reply.replytype]) {
+                        replyTypes[reply.replytype] = 0;
+                    }
+                    replyTypes[reply.replytype]++;
+                    
+                    // Count AI responses
+                    if (reply.replytype === 'airesponse') {
+                        aiResponses++;
+                    }
+                    
+                    // Add to timeline
+                    const replyDate = new Date(reply.time);
+                    const replyDateKey = formatDate(replyDate);
+                    
+                    if (!messageTimeline[replyDateKey]) {
+                        messageTimeline[replyDateKey] = {
+                            messages: 0,
+                            replies: 0
+                        };
+                    }
+                    messageTimeline[replyDateKey].replies++;
+                });
+            });
+            
+            return {
+                totalReplies,
+                replyTypes,
+                aiResponses,
+                messageTimeline
+            };
+        }
+        
+        function formatDate(date) {
+            return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+        }
+        
+        function formatDateTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString();
+        }
+
+        // Update dashboard with data
+        function updateDashboard(data, processedData) {
+            // Update stats
+            document.getElementById('total-messages').textContent = data.totalmessages;
+            document.getElementById('total-replies').textContent = processedData.totalReplies;
+            document.getElementById('member-count').textContent = data.membercount;
+            document.getElementById('ai-responses').textContent = processedData.aiResponses;
+            
+            // Create reply types chart
+            createReplyTypesChart(processedData.replyTypes);
+            
+            // Create message timeline chart
+            createTimelineChart(processedData.messageTimeline);
+            
+            // Render messages
+            renderMessages(data.messages);
+        }
+        
+        function createReplyTypesChart(replyTypes) {
+            const ctx = document.getElementById('reply-types-chart').getContext('2d');
+            
+            const labels = Object.keys(replyTypes).map(type => {
+                // Capitalize first letter
+                return type.charAt(0).toUpperCase() + type.slice(1);
+            });
+            
+            const data = Object.values(replyTypes);
+            
+            const colors = {
+                'feedback': '#4caf50',
+                'further': '#2196f3',
+                'strengthen': '#ff9800',
+                'airesponse': '#9c27b0'
+            };
+            
+            const backgroundColor = Object.keys(replyTypes).map(type => colors[type] || '#999999');
+            
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: backgroundColor,
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+        
+        function createTimelineChart(messageTimeline) {
+            const ctx = document.getElementById('message-timeline-chart').getContext('2d');
+            
+            const dates = Object.keys(messageTimeline).sort((a, b) => {
+                const dateA = new Date(a);
+                const dateB = new Date(b);
+                return dateA - dateB;
+            });
+            
+            const messageData = dates.map(date => messageTimeline[date].messages);
+            const replyData = dates.map(date => messageTimeline[date].replies);
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [
+                        {
+                            label: 'Messages',
+                            data: messageData,
+                            borderColor: '#4a6fa5',
+                            backgroundColor: 'rgba(74, 111, 165, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Replies',
+                            data: replyData,
+                            borderColor: '#4daa57',
+                            backgroundColor: 'rgba(77, 170, 87, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        }
+        
+        function renderMessages(messages) {
+            const container = document.getElementById('messages-container');
+            container.innerHTML = '';
+            
+            if (messages.length === 0) {
+                container.innerHTML = '<div class="no-messages">No messages found</div>';
+                return;
+            }
+            
+            // Sort messages by time (newest first)
+            const sortedMessages = [...messages].sort((a, b) => b.time - a.time);
+            
+            sortedMessages.forEach(message => {
+                const messageCard = document.createElement('div');
+                messageCard.className = 'message-card';
+                
+                // Message header
+                const messageHeader = document.createElement('div');
+                messageHeader.className = 'message-header';
+                
+                const author = document.createElement('div');
+                author.className = 'message-author';
+                author.textContent = message.name;
+                
+                const time = document.createElement('div');
+                time.className = 'message-time';
+                time.textContent = formatDateTime(message.time);
+                
+                messageHeader.appendChild(author);
+                messageHeader.appendChild(time);
+                
+                // Message question
+                const question = document.createElement('div');
+                question.className = 'message-question';
+                question.textContent = message.question;
+                
+                messageCard.appendChild(messageHeader);
+                messageCard.appendChild(question);
+                
+                // Replies section
+                if (message.replies && message.replies.length > 0) {
+                    const replySection = document.createElement('div');
+                    replySection.className = 'reply-section';
+                    
+                    // Sort replies by time (oldest first)
+                    const sortedReplies = [...message.replies].sort((a, b) => a.time - b.time);
+                    
+                    sortedReplies.forEach(reply => {
+                        const replyItem = document.createElement('div');
+                        replyItem.className = 'reply-item';
+                        
+                        const replyMeta = document.createElement('div');
+                        replyMeta.className = 'reply-meta';
+                        
+                        const replyAuthorWrapper = document.createElement('div');
+                        
+                        const replyType = document.createElement('span');
+                        replyType.className = `reply-type type-${reply.replytype}`;
+                        replyType.textContent = reply.replytype.charAt(0).toUpperCase() + reply.replytype.slice(1);
+                        
+                        const replyAuthor = document.createElement('span');
+                        replyAuthor.className = 'reply-author';
+                        replyAuthor.textContent = reply.name.split(' asked')[0]; // Get just the name part
+                        
+                        replyAuthorWrapper.appendChild(replyType);
+                        replyAuthorWrapper.appendChild(replyAuthor);
+                        
+                        const replyTime = document.createElement('span');
+                        replyTime.className = 'reply-time';
+                        replyTime.textContent = formatDateTime(reply.time);
+                        
+                        replyMeta.appendChild(replyAuthorWrapper);
+                        replyMeta.appendChild(replyTime);
+                        
+                        const replyContent = document.createElement('div');
+                        replyContent.className = 'reply-content';
+                        replyContent.textContent = reply.replycontent;
+                        
+                        replyItem.appendChild(replyMeta);
+                        replyItem.appendChild(replyContent);
+                        replySection.appendChild(replyItem);
+                    });
+                    
+                    messageCard.appendChild(replySection);
+                }
+                
+                container.appendChild(messageCard);
+            });
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            const processedData = processData(chatData);
+            updateDashboard(chatData, processedData);
+        });
+    </script>
+</body>
+</html>
