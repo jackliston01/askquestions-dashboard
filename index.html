@@ -319,7 +319,7 @@
 
         <section class="upload-section">
             <h2>Upload Your Chat Data</h2>
-            <p>Upload a JSON file or paste your chat data below</p>
+            <p style="padding-bottom: 20px">Upload a JSON file or paste your chat data below</p>
             
             <label for="file-input" class="upload-btn">
                 Choose File
@@ -476,75 +476,7 @@
             };
             
             // Sample data for testing
-            const sampleData = {
-                "messages": [
-                    {
-                        "name": "Bally Maj",
-                        "question": "Why is the sky blue?",
-                        "time": 1747698267439,
-                        "id": "ballymaj1747698267439",
-                        "replies": [
-                            {
-                                "name": "Bally Maj",
-                                "replycontent": "test",
-                                "replytype": "feedback",
-                                "time": 1747698894862,
-                                "childof": "ballymaj1747698267439"
-                            },
-                            {
-                                "name": "Bally Maj",
-                                "replycontent": "test",
-                                "replytype": "further",
-                                "time": 1747698961951,
-                                "childof": "ballymaj1747698267439"
-                            },
-                            {
-                                "name": "Bally Maj asked AI to strengthen the question and gave the following context: no context. AI responded",
-                                "replycontent": "* Instead of a simple answer, ask what factors *aren't* responsible for the sky's color.\n* Prompt the respondent to consider how the sky's color might appear on other planets or under different atmospheric conditions.\n* Encourage reflection on how our understanding of the sky's color has evolved historically and what future discoveries might reshape it.\n",
-                                "replytype": "strengthen",
-                                "time": 1747698965237,
-                                "childof": "ballymaj1747698267439"
-                            },
-                            {
-                                "name": "Bally Maj asked AI to answer the question and gave the following context: no context. AI responded",
-                                "replycontent": "The sky is blue because of Rayleigh scattering. This scattering effect occurs when sunlight hits air molecules, and blue light is scattered more than other colors due to its shorter wavelength. Further questions: How does air pollution affect the color of the sky? Why are sunsets often red?\n",
-                                "replytype": "airesponse",
-                                "time": 1747698968332,
-                                "childof": "ballymaj1747698267439"
-                            }
-                        ]
-                    },
-                    {
-                        "name": "Bally Maj",
-                        "question": "hello?",
-                        "time": 1747698890000,
-                        "id": "ballymaj1747698890000",
-                        "replies": [
-                            {
-                                "name": "Bally Maj",
-                                "replycontent": "test",
-                                "replytype": "further",
-                                "time": 1747698972759,
-                                "childof": "ballymaj1747698890000"
-                            }
-                        ]
-                    },
-                    {
-                        "name": "Bally Maj",
-                        "question": "Why is the ocean not red?",
-                        "time": 1747698957775,
-                        "id": "ballymaj1747698957775",
-                        "replies": []
-                    }
-                ],
-                "admin": "Bally Maj",
-                "members": ["Bally Maj"],
-                "membercount": 1,
-                "totalmessages": 3
-            };
             
-            // Load sample data into the textarea
-            document.getElementById('json-input').value = JSON.stringify(sampleData, null, 2);
             
             // Event Listeners
             document.getElementById('file-input').addEventListener('change', handleFileUpload);
@@ -1083,7 +1015,6 @@
             }
             
             // Process the sample data on load
-            processData();
         });
     </script>
 </body>
