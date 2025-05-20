@@ -469,6 +469,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize variables
             let chatData = null;
+            let charts = {
+                userActivity: null,
+                replyTypes: null,
+                timeline: null
+            };
             
             // Sample data for testing
             const sampleData = {
@@ -617,6 +622,11 @@
             
             // Function to create user activity chart
             function createUserActivityChart() {
+                // Destroy existing chart if it exists
+                if (charts.userActivity) {
+                    charts.userActivity.destroy();
+                }
+                
                 // Count messages and replies by user
                 const userActivity = {};
                 
@@ -650,7 +660,7 @@
                 
                 // Create chart
                 const ctx = document.getElementById('user-activity-chart').getContext('2d');
-                new Chart(ctx, {
+                charts.userActivity = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: labels,
@@ -695,6 +705,11 @@
             
             // Function to create reply types chart
             function createReplyTypesChart() {
+                // Destroy existing chart if it exists
+                if (charts.replyTypes) {
+                    charts.replyTypes.destroy();
+                }
+                
                 // Count reply types
                 const replyTypes = {};
                 
@@ -724,7 +739,7 @@
                 
                 // Create chart
                 const ctx = document.getElementById('reply-types-chart').getContext('2d');
-                new Chart(ctx, {
+                charts.replyTypes = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
                         labels: labels,
@@ -751,6 +766,11 @@
             
             // Function to create timeline chart
             function createTimelineChart() {
+                // Destroy existing chart if it exists
+                if (charts.timeline) {
+                    charts.timeline.destroy();
+                }
+                
                 // Prepare data for chart
                 const timeData = {};
                 
@@ -788,7 +808,7 @@
                 
                 // Create chart
                 const ctx = document.getElementById('timeline-chart').getContext('2d');
-                new Chart(ctx, {
+                charts.timeline = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
